@@ -64,7 +64,6 @@ namespace Metsys.Little.Tests
          Id = id;
       }
    }
-
    public class Address
    {
       public int StreetNumber { get; set; }

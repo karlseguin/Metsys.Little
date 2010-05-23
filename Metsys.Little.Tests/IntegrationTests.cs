@@ -99,8 +99,6 @@ namespace Metsys.Little.Tests
          Assert.Equal(customer.Orders[0].Price, actual.Orders[0].Price);
          Assert.Equal(customer.Orders[1].Ordered, actual.Orders[1].Ordered);
          Assert.Equal(customer.Orders[1].Price, actual.Orders[1].Price);
-         
-
       }
    }  
 }

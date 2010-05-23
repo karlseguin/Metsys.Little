@@ -11,7 +11,7 @@ Metsys.Little is a lightweight .NET binary serializer with a focus on compactnes
                Description = null,
             };@
 
-Metsys.Little will serialize this to a 13 bytes. The built-in BinaryFormatter will take 400 bytes.
+Metsys.Little will serialize this to a 13 bytes. The built-in BinaryFormatter will take 400 bytes. The object created in the IntegrationTests.NestedTypesWithCollectionOfObjects method serializes to 74 bytes - the BinaryFormatter is over 900.
 
 This is achieved without any cpu-intensive compression or other fancy tricks.
 
