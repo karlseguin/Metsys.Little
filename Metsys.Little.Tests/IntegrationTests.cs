@@ -55,5 +55,31 @@ namespace Metsys.Little.Tests
          Assert.Equal(null, actual.Description);
       }
 
+      [Fact]
+      public void CollectionsAreLossless()
+      {
+         var expected = new ComplexObject
+            {
+               Security = new[] {'a', 'z', '4', '*'},
+         };
+         expected.Roles.Add("abc123");
+         expected.Roles.Add("lkasdk");
+         expected.Roles.Add(null);
+         var data = Serializer.Serialize(expected);
+         var actual = Deserializer.Deserialize<ComplexObject>(data);
+
+         Assert.Equal(expected.Security, actual.Security);
+         Assert.Equal(expected.Roles, actual.Roles);
+      }
+      [Fact]
+      public void NullCollectionIsPreserved()
+      {
+         var expected = new ComplexObject();
+         var data = Serializer.Serialize(expected);
+         var actual = Deserializer.Deserialize<ComplexObject>(data);
+
+         Assert.Equal(null, actual.Security);
+         Assert.Equal(0, actual.Roles.Count);
+      }
    }  
 }

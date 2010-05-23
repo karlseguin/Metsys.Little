@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -21,13 +22,14 @@ namespace Metsys.Little
             {typeof(DateTime), (w, o) => w.Write(((DateTime)o).ToBinary())},
          };
       private readonly BinaryWriter _writer;
+      private readonly Stream _stream;
 
       public static byte[] Serialize<T>(T document)
       {
          using (var ms = new MemoryStream(250))
          using (var writer = new BinaryWriter(ms))
          {
-            new Serializer(writer).WriteObject(document);
+            new Serializer(writer).Start(document);
             return ms.ToArray();
          }
       }
@@ -35,8 +37,20 @@ namespace Metsys.Little
       private Serializer(BinaryWriter writer)
       {
          _writer = writer;
+         _stream = writer.BaseStream;
       }
 
+      private void Start(object o)
+      {
+         if (o is IEnumerable)
+         {
+            Write((IEnumerable)o);
+         }
+         else
+         {
+            WriteObject(o);
+         }
+      }
       private void WriteObject(object o)
       {
          var helper = TypeHelper.GetHelperForType(o.GetType());
@@ -71,11 +85,41 @@ namespace Metsys.Little
          {
             w(_writer, value);
          }
+         else if (value is IEnumerable)
+         {
+            Write((IEnumerable) value);
+         }
          else
          {
             WriteObject(value);  
          }
       }
+
+      private void Write(IEnumerable enumerable)
+      {
+         var start = _stream.Position;
+         _writer.Write(0); //placeholder for # of elements
+         var count = 0;
+         bool? nullable = null;
+         foreach(var item in enumerable)
+         {
+            ++count;
+            if (item == null)
+            {
+               WriteNull();
+               continue;
+            }
+            if (nullable == null)
+            {
+               nullable = MagicProperty.IsNullable(item.GetType());
+            }
+            SerializeMember(item, nullable.Value);
+         }
+         _stream.Seek(start, SeekOrigin.Begin);
+         _writer.Write(count);
+         _stream.Seek(0, SeekOrigin.End);
+      }
+
       private void WriteNull()
       {
          _writer.Write((byte)0);

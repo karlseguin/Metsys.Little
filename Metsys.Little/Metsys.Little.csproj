@@ -39,6 +39,11 @@
   <ItemGroup>
     <Compile Include="Configuration\ExpressionHelper.cs" />
     <Compile Include="Configuration\ITypeConfiguration.cs" />
+    <Compile Include="Configuration\Lists\ArrayWrapper.cs" />
+    <Compile Include="Configuration\Lists\BaseWrapper.cs" />
+    <Compile Include="Configuration\Lists\CollectionWrapper.cs" />
+    <Compile Include="Configuration\Lists\ListHelper.cs" />
+    <Compile Include="Configuration\Lists\ListWrapper.cs" />
     <Compile Include="Configuration\LittleConfiguration.cs" />
     <Compile Include="Deserializer.cs" />
     <Compile Include="Helpers\MagicProperty.cs" />

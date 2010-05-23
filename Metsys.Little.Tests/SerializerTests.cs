@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
@@ -108,6 +109,39 @@ namespace Metsys.Little.Tests
          var now = DateTime.Now;
          var data = Serializer.Serialize(new {x = now});
          Assert.Equal(now, DateTime.FromBinary(BitConverter.ToInt64(data, 0)));
+      }
+      [Fact]
+      public void ArrayOfIntegersGetsSerialized()
+      {
+         var data = Serializer.Serialize(new {x = new[] {1, 5, 9, 19}});
+         Assert.Equal(1, data[0]);
+         Assert.Equal(4, BitConverter.ToInt32(data, 1));
+         Assert.Equal(1, BitConverter.ToInt32(data, 5));
+         Assert.Equal(5, BitConverter.ToInt32(data, 9));
+         Assert.Equal(9, BitConverter.ToInt32(data, 13));
+         Assert.Equal(19, BitConverter.ToInt32(data, 17));
+      }
+      [Fact]
+      public void NullArrayGetsSerialized()
+      {
+         var data = Serializer.Serialize(new SimpleClass<IList<byte>>());
+         Assert.Equal(0, data[0]);
+         Assert.Equal(1, data.Length);
+      }
+      [Fact]
+      public void SerializesArrayWithMixOfNullsAndNotNulls()
+      {
+         var data = Serializer.Serialize(new[] {"ab", null, "cd", null, null});
+         Assert.Equal(5, BitConverter.ToInt32(data, 0));
+         Assert.Equal(1, data[4]);
+         Assert.Equal(2, data[5]);
+         Assert.Equal("ab", Encoding.Default.GetString(data, 6, 2));
+         Assert.Equal(0, data[8]);
+         Assert.Equal(1, data[9]);
+         Assert.Equal(2, data[10]);
+         Assert.Equal("cd", Encoding.Default.GetString(data, 11, 2));
+         Assert.Equal(0, data[13]);
+         Assert.Equal(0, data[14]);
       }
    }
 }

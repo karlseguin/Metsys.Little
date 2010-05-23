@@ -17,9 +17,8 @@ This is achieved without any cpu-intensive compression or other fancy tricks.
 
 h3. Limitations
 
-Metsys.Little only supports built-in value types (int/short/long/float/double/decimal/byte/char/enums/datetime) and strings.
+Metsys.Little supports built-in value types (int/short/long/float/double/decimal/byte/char/enums/datetime) and strings. It also supports a number of IEnumerable's - with the main exception being Dictionary types (non-generic types aren't likely to work either).
 
-Support for nested objects and IEnumerable is expected shortly
 
 h3. Usage
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Xunit;
@@ -124,6 +125,25 @@ namespace Metsys.Little.Tests
          var data = BitConverter.GetBytes(now.ToBinary());
          var o = Deserializer.Deserialize<SimpleClass<DateTime>>(data);
          Assert.Equal(now, o.Value);
+      }
+      [Fact]
+      public void IntegerArrayGetsDeserialized()
+      {
+         var data = new byte[] {2, 0, 0, 0, 20, 0, 0, 0, 140, 0, 0, 0};
+         var o = Deserializer.Deserialize<int[]>(data);
+         Assert.Equal(2, o.Length);
+         Assert.Equal(20, o[0]);
+         Assert.Equal(140, o[1]);
+      }
+      [Fact]
+      public void ListOfNullAndNonNullStringsGetsDeserialized()
+      {
+         var data = new byte[] {3, 0, 0, 0, 0, 0, 1, 2, (byte)'a', (byte)'b'};
+         var o = Deserializer.Deserialize<IList<string>>(data);
+         Assert.Equal(3, o.Count);
+         Assert.Equal(null, o[0]);
+         Assert.Equal(null, o[1]);
+         Assert.Equal("ab", o[2]);
       }
    }
 

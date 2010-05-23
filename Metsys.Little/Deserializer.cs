@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -47,16 +48,36 @@ namespace Metsys.Little
 
       private T Read<T>()
       {
-         return (T)DeserializeValue(typeof(T), false);
+         return (T)DeserializeValue(typeof(T), null);
       }
-      private object DeserializeValue(Type type, bool nullable)
+      private object DeserializeValue(Type type, object container)
       {
          Func<BinaryReader, object> r;
          if (_readerLookup.TryGetValue(type, out r))
          {
             return r(_reader);
          }
+         if (typeof(IEnumerable).IsAssignableFrom(type))
+         {
+            return ReadList(type, container);
+         }
          return ReadObject(type);
+      }
+
+      private object ReadList(Type listType, object existingContainer)
+      {
+         var totalItems = _reader.ReadInt32();
+         var count = 0;
+         var itemType = ListHelper.GetListItemType(listType);
+         var wrapper = BaseWrapper.Create(listType, itemType, existingContainer);
+         var nullable = MagicProperty.IsNullable(itemType);
+
+         while (count++ < totalItems)
+         {
+            var value = nullable && IsNull() ? null : DeserializeValue(itemType, null);
+            wrapper.Add(value);
+         }
+         return wrapper.Collection; 
       }
 
       private object ReadObject(Type type)
@@ -65,8 +86,16 @@ namespace Metsys.Little
          var helper = TypeHelper.GetHelperForType(type);
          foreach(var property in helper.Properties)
          {
-            var value = property.Nullable && IsNull() ? null : DeserializeValue(property.Type, property.Nullable);
-            property.Setter(instance, value);
+            object container = null;
+            if (property.Setter == null)
+            {
+               container = property.Getter(instance);
+            }
+            var value = property.Nullable && IsNull() ? null : DeserializeValue(property.Type, container);
+            if (container == null)
+            {
+               property.Setter(instance, value);
+            }
          }
          return instance;
       }
