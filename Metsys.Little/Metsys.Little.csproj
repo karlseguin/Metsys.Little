@@ -37,13 +37,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\DateTimeMode.cs" />
     <Compile Include="Configuration\ExpressionHelper.cs" />
+    <Compile Include="Configuration\IGlobalConfiguration.cs" />
     <Compile Include="Configuration\ITypeConfiguration.cs" />
-    <Compile Include="Configuration\Lists\ArrayWrapper.cs" />
-    <Compile Include="Configuration\Lists\BaseWrapper.cs" />
-    <Compile Include="Configuration\Lists\CollectionWrapper.cs" />
-    <Compile Include="Configuration\Lists\ListHelper.cs" />
-    <Compile Include="Configuration\Lists\ListWrapper.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\Lists\ArrayWrapper.cs" />
+    <Compile Include="Helpers\Lists\BaseWrapper.cs" />
+    <Compile Include="Helpers\Lists\CollectionWrapper.cs" />
+    <Compile Include="Helpers\Lists\ListHelper.cs" />
+    <Compile Include="Helpers\Lists\ListWrapper.cs" />
     <Compile Include="Configuration\LittleConfiguration.cs" />
     <Compile Include="Deserializer.cs" />
     <Compile Include="Helpers\MagicProperty.cs" />

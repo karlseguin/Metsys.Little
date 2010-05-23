@@ -2,7 +2,7 @@
 
 namespace Metsys.Little.Tests
 {
-   public class MagicPropertyTests
+   public class MagicPropertyTests : BaseFixture
    {
       [Fact]
       public void ReferenceTypesAreNullable()

@@ -7,6 +7,7 @@ namespace Metsys.Little
 {
    public class Serializer
    {
+      private static readonly LittleConfiguration _configuration = LittleConfiguration.Instance;
       private static readonly IDictionary<Type, Action<BinaryWriter, object>>  _writerLookup = new Dictionary<Type, Action<BinaryWriter, object>>
          {
             {typeof(bool), (w, o) => w.Write((bool)o)},
@@ -19,7 +20,17 @@ namespace Metsys.Little
             {typeof(byte), (w, o) => w.Write((byte)o)},
             {typeof(string), (w, o) => w.Write((string)o)},
             {typeof(char), (w, o) => w.Write((char)o)},
-            {typeof(DateTime), (w, o) => w.Write(((DateTime)o).ToBinary())},
+            {typeof(DateTime), (w, o) =>
+               {
+                  if (_configuration.DateTimeMode == DateTimeMode.Detailed)
+                  {
+                     w.Write(((DateTime) o).ToBinary());   
+                  }
+                  else
+                  {
+                     w.Write((int)((DateTime) o).Subtract(Helper.Epoch).TotalSeconds);
+                  }
+               }},
          };
       private readonly BinaryWriter _writer;
       private readonly Stream _stream;

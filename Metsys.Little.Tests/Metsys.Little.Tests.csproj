@@ -41,6 +41,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseFixture.cs" />
     <Compile Include="DeserializeTests.cs" />
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="MagicPropertyTests.cs" />

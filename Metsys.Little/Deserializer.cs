@@ -7,6 +7,7 @@ namespace Metsys.Little
 {
    public class Deserializer
    {
+      private static readonly LittleConfiguration _configuration = LittleConfiguration.Instance;
       private static readonly IDictionary<Type, Func<BinaryReader, object>> _readerLookup = new Dictionary<Type, Func<BinaryReader, object>>
          {
             {typeof(bool), r => r.ReadBoolean()},
@@ -19,7 +20,7 @@ namespace Metsys.Little
             {typeof(byte), r => r.ReadByte()},
             {typeof(string), r => r.ReadString()},
             {typeof(char), r => r.ReadChar()},
-            {typeof(DateTime), r => DateTime.FromBinary(r.ReadInt64())}
+            {typeof(DateTime), r => _configuration.DateTimeMode == DateTimeMode.Detailed ? DateTime.FromBinary(r.ReadInt64()) : Helper.Epoch.AddSeconds(r.ReadInt32())},
          };
       private readonly BinaryReader _reader;
       private readonly Stream _stream;

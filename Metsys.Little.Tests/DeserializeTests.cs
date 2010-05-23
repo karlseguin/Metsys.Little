@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using Xunit;
 
 namespace Metsys.Little.Tests
 {
-   public class DeserializerTests
+   public class DeserializerTests : BaseFixture
    {
       [Fact]
       public void NonNullNullableGetsDeserialized()
@@ -119,8 +118,17 @@ namespace Metsys.Little.Tests
          Assert.Equal('y', o.Value);
       }
       [Fact]
-      public void DateTimeGetsDeserialized()
+      public void DateTimeGetsDeserializedWithSecondPrecession()
       {
+         var now = DateTime.Now;
+         var data = BitConverter.GetBytes((int)now.Subtract(Helper.Epoch).TotalSeconds);
+         var o = Deserializer.Deserialize<SimpleClass<DateTime>>(data);
+         Assert.Equal(now.ToString(), o.Value.ToString());
+      }
+      [Fact]
+      public void DateTimeGetsDeserializedWithDetailedPrecession()
+      {
+         LittleConfiguration.Global(g => g.DateTime(DateTimeMode.Detailed));
          var now = DateTime.Now;
          var data = BitConverter.GetBytes(now.ToBinary());
          var o = Deserializer.Deserialize<SimpleClass<DateTime>>(data);

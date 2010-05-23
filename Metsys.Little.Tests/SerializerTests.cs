@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Metsys.Little.Tests
 {
-   public class SerializerTests
+   public class SerializerTests : BaseFixture
    {
       [Fact]
       public void NullGetsSerialized()
@@ -104,11 +104,19 @@ namespace Metsys.Little.Tests
          Assert.Equal('w', (char)data[0]);
       }
       [Fact]
-      public void DateTimeGetsSerialized()
+      public void DateTimeGetsDetailedSerialized()
       {
+         LittleConfiguration.Global(g => g.DateTime(DateTimeMode.Detailed));
          var now = DateTime.Now;
          var data = Serializer.Serialize(new {x = now});
          Assert.Equal(now, DateTime.FromBinary(BitConverter.ToInt64(data, 0)));
+      }
+      [Fact]
+      public void DateTimeGetsSecondsPrecisionSerialized()
+      {
+         var now = DateTime.Now;
+         var data = Serializer.Serialize(new { x = now });
+         Assert.Equal(now.ToString(), Helper.Epoch.AddSeconds(BitConverter.ToInt32(data, 0)).ToString());
       }
       [Fact]
       public void ArrayOfIntegersGetsSerialized()

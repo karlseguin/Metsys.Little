@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Xunit;
 
 namespace Metsys.Little.Tests
 {
-   public class IntegrationTests
+   public class IntegrationTests : BaseFixture
    {
-      public IntegrationTests()
-      {
-         typeof(LittleConfiguration).GetField("_instance", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, null);
-         typeof(TypeHelper).GetField("_configuration", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, LittleConfiguration.Instance);
-         typeof(TypeHelper).GetField("_cachedTypeLookup", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, new Dictionary<Type, TypeHelper>());
-      }
-
       [Fact]
       public void ProcessIsLossless()
       {
@@ -95,9 +86,9 @@ namespace Metsys.Little.Tests
          Assert.Equal(customer.Address.StreetName, actual.Address.StreetName);
          Assert.Equal(customer.Address.StreetNumber, actual.Address.StreetNumber);
          Assert.Equal(customer.Orders.Count, actual.Orders.Count);
-         Assert.Equal(customer.Orders[0].Ordered, actual.Orders[0].Ordered);
+         Assert.Equal(customer.Orders[0].Ordered.ToString(), actual.Orders[0].Ordered.ToString());
          Assert.Equal(customer.Orders[0].Price, actual.Orders[0].Price);
-         Assert.Equal(customer.Orders[1].Ordered, actual.Orders[1].Ordered);
+         Assert.Equal(customer.Orders[1].Ordered.ToString(), actual.Orders[1].Ordered.ToString());
          Assert.Equal(customer.Orders[1].Price, actual.Orders[1].Price);
       }
    }  
