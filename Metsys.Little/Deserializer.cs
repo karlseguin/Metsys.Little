@@ -89,8 +89,8 @@ namespace Metsys.Little
         }
         private object ReadObject(Type type)
         {
-            var instance = Activator.CreateInstance(type, true);
             var helper = TypeHelper.GetHelperForType(type);
+            var instance = helper.Create();            
             foreach (var property in helper.Properties)
             {
                 object container = null;
