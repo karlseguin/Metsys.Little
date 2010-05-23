@@ -64,10 +64,6 @@ namespace Metsys.Little
                 var value = property.Getter(o);
                 if (value == null)
                 {
-                    if (!property.Nullable)
-                    {
-                        throw new InvalidOperationException(string.Format("Got not value for non-nullable type: {0}", property.Type.Name));
-                    }
                     WriteNull();
                     continue;
                 }
@@ -77,7 +73,7 @@ namespace Metsys.Little
 
         private void SerializeMember(object value, bool nullable)
         {
-            Type type = value.GetType();
+            var type = value.GetType();
             if (type.IsEnum)
             {
                 type = Enum.GetUnderlyingType(type);
@@ -106,11 +102,11 @@ namespace Metsys.Little
             var start = _stream.Position;
             _writer.Write(0); //placeholder for # of elements
             var count = 0;
-            bool? nullable = null;
+            //bool? nullable = null;
             foreach (var item in enumerable)
             {
                 ++count;
-                if (item == null)
+/*               if (item == null)
                 {
                     WriteNull();
                     continue;
@@ -119,7 +115,8 @@ namespace Metsys.Little
                 {
                     nullable = MagicProperty.IsNullable(item.GetType());
                 }
-                SerializeMember(item, nullable.Value);
+ */
+                SerializeMember(item, false);
             }
             _stream.Seek(start, SeekOrigin.Begin);
             _writer.Write(count);

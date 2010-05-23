@@ -70,11 +70,10 @@ namespace Metsys.Little
             var count = 0;
             var itemType = ListHelper.GetListItemType(listType);
             var wrapper = BaseWrapper.Create(listType, itemType, existingContainer);
-            var nullable = MagicProperty.IsNullable(itemType);
-
+            
             while (count++ < totalItems)
             {
-                var value = nullable && IsNull() ? null : DeserializeValue(itemType, null);
+                var value = DeserializeValue(itemType, null);
                 wrapper.Add(value);
             }
             return wrapper.Collection;

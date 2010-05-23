@@ -22,10 +22,19 @@ namespace Metsys.Little
             }
 
             var isCollection = false;
-            var types = new List<Type>(type.GetInterfaces().Select(h => h.IsGenericType ? h.GetGenericTypeDefinition() : h));
-            types.Insert(0, type.IsGenericType ? type.GetGenericTypeDefinition() : type);              
-            foreach(var @interface in types)
+            var interfaces = type.GetInterfaces();
+            var count = interfaces.Length + 1;
+            var types = new List<Type>(count) {type.IsGenericType ? type.GetGenericTypeDefinition() : type};
+            types.AddRange(interfaces);
+            
+            for(var i = 0; i < count; ++i)
             {
+                var @interface = types[i];
+                if (@interface.IsGenericType)
+                {
+                    @interface = @interface.GetGenericTypeDefinition();
+                    types[i] = @interface;
+                }
                 if (typeof(IList<>).IsAssignableFrom(@interface) || typeof(IList).IsAssignableFrom(@interface))
                 {
                     return new ListWrapper();
@@ -41,8 +50,9 @@ namespace Metsys.Little
             }
 
             //a last-ditch pass
-            foreach (var @interface in types)
+            for(var i = 0; i < count; ++i)
             {
+                var @interface = types[i];
                 if (typeof(IEnumerable<>).IsAssignableFrom(@interface) || typeof(IEnumerable).IsAssignableFrom(@interface))
                 {
                     return new ListWrapper();
