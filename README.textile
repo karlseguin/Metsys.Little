@@ -1,0 +1,30 @@
+h2. Metsys.Little
+
+Metsys.Little is a lightweight .NET binary serializer with a focus on compactness and speed. Given the following object:
+
+@var user = new User
+	   {
+               Id = 433,
+               Name = "Goku"
+    	       Enabled = true,
+	       Initial = null,
+               Description = null,
+            };@
+
+Metsys.Little will serialize this to a 13 bytes. The built-in BinaryFormatter will take 400 bytes.
+
+This is achieved without any cpu-intensive compression or other fancy tricks.
+
+h3. Limitations
+
+Metsys.Little only supports built-in value types (int/short/long/float/double/decimal/byte/char/enums/datetime) and strings.
+
+Support for nested objects and IEnumerable is expected shortly
+
+h3. Usage
+
+Use the Serializer.Serialize method to turn your object into a byte array:
+@var data = Serializer.Serialize(new User{...});@
+
+Use the Deserializer.Deserialize method to turn your byte array (or stream) back into your object:
+@var user = Deserializer.Deserialize(data);@
