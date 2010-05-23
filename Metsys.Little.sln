@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
+﻿Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metsys.Little", "Metsys.Little\Metsys.Little.csproj", "{EA3D14CF-DFF0-4FF1-A1EE-A2FA81787C07}"
 EndProject
