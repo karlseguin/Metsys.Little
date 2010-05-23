@@ -32,7 +32,6 @@ namespace Metsys.Little.Tests
          Assert.Equal(null, actual.Initial);
          Assert.Equal(null, actual.Description);
       }
-
       [Fact]
       public void IgnoredPropertiesArentPreserved()
       {
@@ -54,7 +53,6 @@ namespace Metsys.Little.Tests
          Assert.Equal('z', actual.Initial);
          Assert.Equal(null, actual.Description);
       }
-
       [Fact]
       public void CollectionsAreLossless()
       {
@@ -80,6 +78,29 @@ namespace Metsys.Little.Tests
 
          Assert.Equal(null, actual.Security);
          Assert.Equal(0, actual.Roles.Count);
+      }
+      [Fact]
+      public void NestedTypesWithCollectionOfObjects()
+      {
+         var customer = new Customer(43)
+            {
+               Address = new Address {StreetName = "Its Over", StreetNumber = 9000},
+            };
+         customer.Orders.Add(new Order {Ordered = new DateTime(2010, 1, 4, 4, 59, 4), Price = 32.99m});
+         customer.Orders.Add(new Order { Ordered = new DateTime(2009, 12, 31), Price = 99 });
+         var data = Serializer.Serialize(customer);
+         var actual = Deserializer.Deserialize<Customer>(data);
+
+         Assert.Equal(customer.Id, actual.Id);
+         Assert.Equal(customer.Address.StreetName, actual.Address.StreetName);
+         Assert.Equal(customer.Address.StreetNumber, actual.Address.StreetNumber);
+         Assert.Equal(customer.Orders.Count, actual.Orders.Count);
+         Assert.Equal(customer.Orders[0].Ordered, actual.Orders[0].Ordered);
+         Assert.Equal(customer.Orders[0].Price, actual.Orders[0].Price);
+         Assert.Equal(customer.Orders[1].Ordered, actual.Orders[1].Ordered);
+         Assert.Equal(customer.Orders[1].Price, actual.Orders[1].Price);
+         
+
       }
    }  
 }

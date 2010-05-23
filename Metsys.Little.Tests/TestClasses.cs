@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Metsys.Little.Tests
 {
@@ -17,7 +18,7 @@ namespace Metsys.Little.Tests
       Two,
       Over9000,
    }
-   [System.Serializable]
+
    public class ComplexObject
    {
       private IList<string> _roles;
@@ -38,5 +39,40 @@ namespace Metsys.Little.Tests
             return _roles;
          }
       }
+   }
+
+   public class Customer
+   {
+      private IList<Order> _orders;
+      public int Id { get; private set; }
+      public Address Address { get; set; }
+      public IList<Order> Orders
+      {
+         get
+         {
+            if (_orders == null)
+            {
+               _orders = new List<Order>();
+            }
+            return _orders;
+         }
+      }
+
+      private Customer(){}
+      public Customer(int id)
+      {
+         Id = id;
+      }
+   }
+
+   public class Address
+   {
+      public int StreetNumber { get; set; }
+      public string StreetName { get; set; }
+   }
+   public class Order
+   {
+      public decimal Price { get; set; }
+      public DateTime Ordered { get; set; }
    }
 }
