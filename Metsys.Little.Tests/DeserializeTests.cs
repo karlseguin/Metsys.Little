@@ -153,6 +153,14 @@ namespace Metsys.Little.Tests
          Assert.Equal(null, o[1]);
          Assert.Equal("ab", o[2]);
       }
+      [Fact]
+      public void GuidGetsDeserialized()
+      {
+          var guid = Guid.NewGuid();
+          var data = guid.ToByteArray();
+          var o = Deserializer.Deserialize<SimpleClass<Guid>>(data);
+          Assert.Equal(guid, o.Value);
+      }
    }
 
    internal static class Extensions

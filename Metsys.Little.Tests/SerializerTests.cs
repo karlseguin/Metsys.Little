@@ -151,5 +151,12 @@ namespace Metsys.Little.Tests
          Assert.Equal(0, data[13]);
          Assert.Equal(0, data[14]);
       }
+      [Fact]
+      public void GuidGetsSerialized()
+      {
+          var guid = Guid.NewGuid();
+          var data = Serializer.Serialize(new { x = guid });
+          Assert.Equal(guid, new Guid(data));
+      }
    }
 }
