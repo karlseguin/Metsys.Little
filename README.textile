@@ -19,6 +19,7 @@ h3. Limitations
 
 Metsys.Little supports built-in value types (int/short/long/float/double/decimal/byte/char/enums/datetime) and strings. It also supports a number of IEnumerable's - with the main exception being Dictionary types (non-generic types aren't likely to work either).
 
+The type must have a default constructor - it can be private.
 
 h3. Usage
 
