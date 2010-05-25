@@ -136,7 +136,7 @@ namespace Metsys.Little.Tests
          Assert.Equal(0, data[0]);
          Assert.Equal(1, data.Length);
       }
-      [Fact]
+      [Fact(Skip="took out this feature")]
       public void SerializesArrayWithMixOfNullsAndNotNulls()
       {
          var data = Serializer.Serialize(new[] {"ab", null, "cd", null, null});

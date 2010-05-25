@@ -87,11 +87,10 @@ namespace Metsys.Little
             var count = 0;
             var itemType = ListHelper.GetListItemType(listType);
             var wrapper = BaseWrapper.Create(listType, itemType, existingContainer);
-            var nullable = MagicProperty.IsNullable(itemType);
-
+            
             while (count++ < totalItems)
             {
-                var value = nullable && IsNull() ? null : DeserializeValue(itemType, null);
+                var value = DeserializeValue(itemType, null);
                 wrapper.Add(value);
             }
             return wrapper.Collection;
@@ -106,8 +105,8 @@ namespace Metsys.Little
         }
         private object ReadObject(Type type)
         {
-            var instance = Activator.CreateInstance(type, true);
             var helper = TypeHelper.GetHelperForType(type);
+            var instance = helper.Create();            
             foreach (var property in helper.Properties)
             {
                 object container = null;
