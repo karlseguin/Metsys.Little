@@ -28,3 +28,7 @@ Use the Serializer.Serialize method to turn your object into a byte array:
 
 Use the Deserializer.Deserialize method to turn your byte array (or stream) back into your object:
 @var user = Deserializer.Deserialize(data);@
+
+Metsys.Little does not (currently) support versioning. If your object changes (add/remove properties) previously serialized data will not be able to be deserialized. Metsys.Little is suited for short-lived data (shopping carts, session) or where versioning is handled at the application layer.
+
+If you like Little, you may also want to check out "Protobuff":http://code.google.com/p/protobuf/ - there are a number of quality C# implementations. Protobuf supports versioning, can be smaller, and some implementations are faster.
