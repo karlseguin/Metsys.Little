@@ -37,11 +37,16 @@ namespace Metsys.Little
         public static byte[] Serialize<T>(T document)
         {
             using (var ms = new MemoryStream(250))
-            using (var writer = new BinaryWriter(ms))
             {
-                new Serializer(writer).Start(document);
+                Serialize(document, ms);
                 return ms.ToArray();
             }
+        }
+
+        public static void Serialize<T>(T document, Stream destination)
+        {
+            var writer = new BinaryWriter(destination);
+            new Serializer(writer).Start(document);
         }
 
         private void Start(object o)

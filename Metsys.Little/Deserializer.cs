@@ -38,7 +38,7 @@ namespace Metsys.Little
             {
                 ms.Write(objectData, 0, objectData.Length);
                 ms.Position = 0;
-                return Deserialize<T>(new BinaryReader(ms));
+                return Deserialize<T>(ms);
             }
         }
 
@@ -47,10 +47,27 @@ namespace Metsys.Little
             return new Deserializer(stream).Read<T>();
         }
 
+        public static T Deserialize<T>(Stream stream)
+        {
+            if(stream.CanSeek && stream.Length == stream.Position)
+            {
+                return default(T);
+            }
+            try
+            {
+                return Deserialize<T>(new BinaryReader(stream));
+            } 
+            catch(EndOfStreamException) 
+            {
+                return default(T);
+            }
+        }
+
         private T Read<T>()
         {
             return (T) DeserializeValue(typeof (T), null);
         }
+
         private object DeserializeValue(Type type, object container)
         {
             Func<Deserializer, object> r;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace Metsys.Little.Tests
@@ -91,5 +93,35 @@ namespace Metsys.Little.Tests
          Assert.Equal(customer.Orders[1].Ordered.ToString(), actual.Orders[1].Ordered.ToString());
          Assert.Equal(customer.Orders[1].Price, actual.Orders[1].Price);
       }
+       [Fact]
+       public void CanReadWriteMultipleToSingleStream()
+       {
+           var customers = new[]
+           {
+               new Customer(10) {Address = new Address {StreetName = "Abc St.", StreetNumber = 123},},
+               new Customer(20) {Address = new Address {StreetName = "Def St.", StreetNumber = 456},},
+               new Customer(30) {Address = new Address {StreetName = "Sesame St.", StreetNumber = 789},},
+           };
+           var stream = new MemoryStream();
+           foreach (var customer in customers)
+           {
+               Serializer.Serialize(customer, stream);
+           }
+           stream.Position = 0;
+           var i = 0;
+           while(true)
+           {
+               var customer = Deserializer.Deserialize<Customer>(stream);
+               if (customer == null)
+               {
+                   break;
+               }
+               Assert.Equal(customers[i].Id, customer.Id);
+               Assert.Equal(customers[i].Address.StreetName, customer.Address.StreetName);
+               Assert.Equal(customers[i].Address.StreetNumber, customer.Address.StreetNumber);
+               i++;
+           }
+           Assert.Equal(3,i);
+       }
    }  
 }
