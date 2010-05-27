@@ -7,13 +7,18 @@ namespace Metsys.Little.Tests
 {
    public class SerializerTests : BaseFixture
    {
+       [Fact]
+       public void NullGetsSerialized() {
+           var data = Serializer.Serialize(new SimpleNullClass());
+           Assert.Equal(new byte[2], data);
+       }
       [Fact]
-      public void NullGetsSerialized()
+      public void NullFieldsGetsSerialized()
       {
-         var data = Serializer.Serialize(new SimpleNullClass());
+         var data = Serializer.Serialize(new SimpleNullFieldClass());
          Assert.Equal(new byte[2], data);
       }
-      [Fact]
+       [Fact]
       public void NullableGetsPrefixedWhenNull()
       {
          var data = Serializer.Serialize(new { x = (bool?)null });
@@ -136,7 +141,13 @@ namespace Metsys.Little.Tests
          Assert.Equal(0, data[0]);
          Assert.Equal(1, data.Length);
       }
-      [Fact(Skip="took out this feature")]
+      [Fact]
+      public void NullArrayFieldGetsSerialized() {
+          var data = Serializer.Serialize(new SimpleFieldClass<IList<byte>>());
+          Assert.Equal(0, data[0]);
+          Assert.Equal(1, data.Length);
+      }
+      [Fact(Skip = "took out this feature")]
       public void SerializesArrayWithMixOfNullsAndNotNulls()
       {
          var data = Serializer.Serialize(new[] {"ab", null, "cd", null, null});

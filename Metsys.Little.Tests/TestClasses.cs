@@ -8,10 +8,19 @@ namespace Metsys.Little.Tests
       public string NullString { get; set; }
       public int? NullInt { get; set; }
    }
+    public class SimpleNullFieldClass
+    {
+        public string NullString;
+        public int? NullInt;
+    }
    public class SimpleClass<T>
    {
       public T Value { get; set; }
    }
+    public class SimpleFieldClass<T>
+    {
+        public T Value;
+    }
    public enum PowerLevels
    {
       One,

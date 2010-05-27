@@ -64,15 +64,21 @@ namespace Metsys.Little
         private void WriteObject(object o)
         {
             var helper = TypeHelper.GetHelperForType(o.GetType());
-            foreach (var property in helper.Properties)
-            {
+            foreach(var property in helper.Properties) {
                 var value = property.Getter(o);
-                if (value == null)
-                {
+                if(value == null) {
                     WriteNull();
                     continue;
                 }
                 SerializeMember(property.Getter(o), property.Nullable);
+            }
+            foreach(var field in helper.Fields) {
+                var value = field.Getter(o);
+                if(value == null) {
+                    WriteNull();
+                    continue;
+                }
+                SerializeMember(field.Getter(o), field.Nullable);
             }
         }
 

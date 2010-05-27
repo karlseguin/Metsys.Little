@@ -42,6 +42,7 @@
     <Compile Include="Configuration\IGlobalConfiguration.cs" />
     <Compile Include="Configuration\ITypeConfiguration.cs" />
     <Compile Include="Helpers\ConstructorHelper.cs" />
+    <Compile Include="Helpers\MagicField.cs" />
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Helpers\Lists\ArrayWrapper.cs" />
     <Compile Include="Helpers\Lists\BaseWrapper.cs" />

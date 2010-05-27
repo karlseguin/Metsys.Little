@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Metsys.Little
@@ -12,6 +13,7 @@ namespace Metsys.Little
         private readonly IList<MagicProperty> _properties;
         private readonly Func<object> _createHandler;
         private readonly Type _type;
+        private IList<MagicField> _fields;
 
         public object Create()
         {
@@ -22,6 +24,8 @@ namespace Metsys.Little
         {
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             _properties = LoadMagicProperties(type, properties);
+            _fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)
+                .Select(field => new MagicField(field)).ToList();
             _type = type;
             var constructorInfo = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
             if (constructorInfo != null)
@@ -33,6 +37,11 @@ namespace Metsys.Little
         public IEnumerable<MagicProperty> Properties
         {
             get { return _properties; }
+        }
+
+        public IEnumerable<MagicField> Fields
+        {
+            get { return _fields; }
         }
 
         public static TypeHelper GetHelperForType(Type type)
