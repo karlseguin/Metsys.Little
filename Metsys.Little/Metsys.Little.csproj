@@ -41,6 +41,7 @@
     <Compile Include="Configuration\ExpressionHelper.cs" />
     <Compile Include="Configuration\IGlobalConfiguration.cs" />
     <Compile Include="Configuration\ITypeConfiguration.cs" />
+    <Compile Include="DataHeader.cs" />
     <Compile Include="Helpers\ConstructorHelper.cs" />
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Helpers\Lists\ArrayWrapper.cs" />

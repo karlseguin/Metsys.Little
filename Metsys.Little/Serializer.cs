@@ -69,7 +69,7 @@ namespace Metsys.Little
                 var value = property.Getter(o);
                 if (value == null)
                 {
-                    WriteNull();
+                    WriteHeader(new DataHeader{IsNull = true});
                     continue;
                 }
                 SerializeMember(property.Getter(o), property.Nullable);
@@ -140,9 +140,13 @@ namespace Metsys.Little
             }
         }
 
-        private void WriteNull()
+        private void WriteHeader(DataHeader header)
         {
-            _writer.Write((byte) 0);
+            var data = (byte) 0;
+            
+            if (header.IsNull) { data |= 128; }
+            
+            _writer.Write(data);
         }
     }
 }

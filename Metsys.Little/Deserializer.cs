@@ -114,7 +114,8 @@ namespace Metsys.Little
                 {
                     container = property.Getter(instance);
                 }
-                var value = property.Nullable && IsNull() ? null : DeserializeValue(property.Type, container);
+                var header = property.HasHeader ? ReaderHeader() : DataHeader.Default;
+                var value = header.IsNull ? null : DeserializeValue(property.Type, container);
                 if (container == null)
                 {
                     property.Setter(instance, value);
@@ -122,9 +123,12 @@ namespace Metsys.Little
             }
             return instance;
         }
-        private bool IsNull()
+        private DataHeader ReaderHeader()
         {
-            return _reader.ReadByte() == 0;
+            var data = _reader.ReadByte();
+            var header = new DataHeader();            
+            if ((data & 128) == 128) { header.IsNull = true; }                       
+            return header;
         }
     }
 }

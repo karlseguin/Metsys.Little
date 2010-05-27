@@ -16,13 +16,13 @@ namespace Metsys.Little.Tests
       [Fact]
       public void NullNullableGetsDeserialized()
       {
-         var o = Deserializer.Deserialize<SimpleClass<int?>>(new byte[] { 0 });
+         var o = Deserializer.Deserialize<SimpleClass<int?>>(new byte[] { 128 });
          Assert.Equal(null, o.Value);
       }
       [Fact]
       public void NullGetsDeserialized()
       {
-         var o = Deserializer.Deserialize<SimpleNullClass>(new byte[2]);
+         var o = Deserializer.Deserialize<SimpleNullClass>(new byte[2]{128, 128});
          Assert.Equal(null, o.NullInt);
          Assert.Equal(null, o.NullString);
       }
@@ -99,7 +99,7 @@ namespace Metsys.Little.Tests
       [Fact]
       public void NullStringGetsDeserialized()
       {
-         var data = new byte[1];
+         var data = new byte[1] {128};
          var o = Deserializer.Deserialize<SimpleClass<string>>(data);
          Assert.Equal(null, o.Value); 
       }
