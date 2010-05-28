@@ -146,5 +146,13 @@ namespace Metsys.Little.Tests
          var actual = Deserializer.Deserialize<AbstractContainer>(data);
          Assert.Equal("Working", ((ImplementationA)actual.Implementation).Name);
       }
+      [Fact]
+      public void AbstractNullPropertyIsSetToNull()
+      {
+         var expected = new AbstractContainer();
+         var data = Serializer.Serialize(expected);
+         var actual = Deserializer.Deserialize<AbstractContainer>(data);
+         Assert.Equal(null, actual.Implementation);
+      }
    }
 }
