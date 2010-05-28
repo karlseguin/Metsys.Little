@@ -74,4 +74,24 @@ namespace Metsys.Little.Tests
       public decimal Price { get; set; }
       public DateTime Ordered { get; set; }
    }
+
+   public interface IAmAnInterface { }
+   public abstract class BaseClass { }
+   public class ImplementationA : BaseClass, IAmAnInterface
+   {
+       public string Name{ get; set;}
+   }
+   public class ImplementationB : BaseClass, IAmAnInterface
+   {
+       public bool IsEnabled{ get; set;}
+   }
+   
+   public class InterfaceContainer
+   {
+       public IAmAnInterface Implementation{ get; set;}
+   }
+   public class AbstractContainer
+   {
+       public BaseClass Implementation { get; set; }
+   }
 }

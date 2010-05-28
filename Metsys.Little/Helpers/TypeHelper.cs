@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -12,7 +13,7 @@ namespace Metsys.Little
         private readonly IList<MagicProperty> _properties;
         private readonly Func<object> _createHandler;
         private readonly Type _type;
-
+        
         public object Create()
         {
             return _createHandler == null ? Activator.CreateInstance(_type, true) : _createHandler();
@@ -22,7 +23,7 @@ namespace Metsys.Little
         {
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             _properties = LoadMagicProperties(type, properties);
-            _type = type;
+            _type = type;            
             var constructorInfo = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
             if (constructorInfo != null)
             {

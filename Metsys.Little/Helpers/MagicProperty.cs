@@ -36,7 +36,7 @@ namespace Metsys.Little
             var t = property.PropertyType;
             _property = property;
             _nullable = IsNullable(t);
-            _hasHeader = _nullable;
+             _hasHeader = _nullable || Helper.IsAmbiguous(property.DeclaringType);
             if (t.IsEnum)
             {
                _type = Enum.GetUnderlyingType(t);
