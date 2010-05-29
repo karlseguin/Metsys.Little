@@ -64,13 +64,15 @@ namespace Metsys.Little
         private void WriteObject(object o)
         {
             var helper = TypeHelper.GetHelperForType(o.GetType());
-            foreach(var property in helper.Properties) {
-                var value = property.Getter(o);
-                if(value == null) {
-                    WriteNull();
+            foreach (var property in helper.Properties)
+            {
+                var value = property.Getter(o);               
+                if (value == null)
+                {                    
+                    WriteHeader(new DataHeader{IsNull = true});
                     continue;
                 }
-                SerializeMember(property.Getter(o), property.Nullable);
+                SerializeMember(property.Getter(o), property.Nullable, property.Type);
             }
             foreach(var field in helper.Fields) {
                 var value = field.Getter(o);
@@ -82,17 +84,16 @@ namespace Metsys.Little
             }
         }
 
-        private void SerializeMember(object value, bool nullable)
+        private void SerializeMember(object value, bool nullable, Type declaredType)
         {
             var type = value.GetType();
             if (type.IsEnum)
             {
                 type = Enum.GetUnderlyingType(type);
             }
-            if (nullable)
-            {
-                _writer.Write((byte) 1);
-            }
+            
+            WriteHeader(nullable, type, declaredType); 
+            
             Action<Serializer, object> w;
             if (_writerLookup.TryGetValue(type, out w))
             {
@@ -113,21 +114,12 @@ namespace Metsys.Little
             var start = _stream.Position;
             _writer.Write(0); //placeholder for # of elements
             var count = 0;
-            //bool? nullable = null;
+            var declaredType = ListHelper.GetListItemType(enumerable.GetType());
+            var isAmbigous = Helper.IsAmbiguous(declaredType);
             foreach (var item in enumerable)
             {
                 ++count;
-/*               if (item == null)
-                {
-                    WriteNull();
-                    continue;
-                }
-                if (nullable == null)
-                {
-                    nullable = MagicProperty.IsNullable(item.GetType());
-                }
- */
-                SerializeMember(item, false);
+                SerializeMember(item, isAmbigous, declaredType);
             }
             _stream.Seek(start, SeekOrigin.Begin);
             _writer.Write(count);
@@ -145,10 +137,27 @@ namespace Metsys.Little
                 _writer.Write((int)date.Subtract(Helper.Epoch).TotalSeconds);
             }
         }
-
-        private void WriteNull()
+        
+        private void WriteHeader(bool nullable, Type type, Type declaredType)
         {
-            _writer.Write((byte) 0);
+            if (!nullable) { return; }
+            var isAmbiguous = Helper.IsAmbiguous(declaredType);
+            var header = new DataHeader {IsNull = false, IsAmbiguous = isAmbiguous};
+            WriteHeader(header);
+            if (isAmbiguous)
+            {
+                _writerLookup[typeof (string)](this, type.AssemblyQualifiedName);
+            }            
         }
+
+        private void WriteHeader(DataHeader header)
+        {
+            var data = (byte) 0;
+
+            if (header.IsNull) { data |= 128; }
+            if (header.IsAmbiguous) { data |= 64; }
+            
+            _writer.Write(data);
+        }               
     }
 }

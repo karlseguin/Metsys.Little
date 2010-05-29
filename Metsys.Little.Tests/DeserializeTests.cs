@@ -16,13 +16,13 @@ namespace Metsys.Little.Tests
       [Fact]
       public void NullNullableGetsDeserialized()
       {
-         var o = Deserializer.Deserialize<SimpleClass<int?>>(new byte[] { 0 });
+         var o = Deserializer.Deserialize<SimpleClass<int?>>(new byte[] { 128 });
          Assert.Equal(null, o.Value);
       }
       [Fact]
       public void NullGetsDeserialized()
       {
-         var o = Deserializer.Deserialize<SimpleNullClass>(new byte[2]);
+         var o = Deserializer.Deserialize<SimpleNullClass>(new byte[2]{128, 128});
          Assert.Equal(null, o.NullInt);
          Assert.Equal(null, o.NullString);
       }
@@ -105,14 +105,14 @@ namespace Metsys.Little.Tests
       [Fact]
       public void NullStringGetsDeserialized()
       {
-         var data = new byte[1];
+         var data = new byte[1] {128};
          var o = Deserializer.Deserialize<SimpleClass<string>>(data);
          Assert.Equal(null, o.Value); 
       }
       [Fact]
       public void StringGetsDeserialized()
       {
-         var data = Encoding.Default.GetBytes("ovr9k").Prefix(5).Prefix(1);
+         var data = Encoding.Default.GetBytes("ovr9k").Prefix(5).Prefix(0);
          var o = Deserializer.Deserialize<SimpleClass<string>>(data);
          Assert.Equal("ovr9k", o.Value);
       }
@@ -167,6 +167,23 @@ namespace Metsys.Little.Tests
           var o = Deserializer.Deserialize<SimpleClass<Guid>>(data);
           Assert.Equal(guid, o.Value);
       }
+      [Fact]
+      public void AmbiguousInterfacesGetsDeserializedIntoConcreteImplementation()
+      {
+          const string typeName = "Metsys.Little.Tests.ImplementationB, Metsys.Little.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+          var data = Encoding.Default.GetBytes(typeName).Prefix((byte)typeName.Length).Prefix(64).Append(1);
+          var o = Deserializer.Deserialize<InterfaceContainer>(data);
+          Assert.Equal(true, ((ImplementationB)o.Implementation).IsEnabled);
+      }
+      [Fact]
+      public void AmbiguousAbstractGetsDeserializedIntoConcreteImplementation()
+      {
+          const string typeName = "Metsys.Little.Tests.ImplementationA, Metsys.Little.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+          var header = Encoding.Default.GetBytes(typeName).Prefix((byte) typeName.Length).Prefix(64);
+          var payload = Encoding.Default.GetBytes("my name").Prefix(7).Prefix(0);
+          var o = Deserializer.Deserialize<InterfaceContainer>(header.Append(payload));
+          Assert.Equal("my name", ((ImplementationA)o.Implementation).Name);
+      }      
    }
 
    internal static class Extensions
@@ -177,6 +194,13 @@ namespace Metsys.Little.Tests
          n[0] = b;
          Buffer.BlockCopy(data, 0, n, 1, data.Length);
          return n;
+      }
+      internal static byte[] Append(this byte[] data, params byte[] b)
+      {
+          var n = new byte[data.Length + b.Length];          
+          Buffer.BlockCopy(data, 0, n, 0, data.Length);
+          Buffer.BlockCopy(b, 0, n, data.Length, b.Length);
+          return n;
       }
    }
 }

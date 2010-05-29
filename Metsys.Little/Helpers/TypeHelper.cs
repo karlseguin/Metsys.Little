@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,10 +12,10 @@ namespace Metsys.Little
         private static readonly LittleConfiguration _configuration = LittleConfiguration.Instance;
 
         private readonly IList<MagicProperty> _properties;
+        private readonly IList<MagicField> _fields;
         private readonly Func<object> _createHandler;
         private readonly Type _type;
-        private IList<MagicField> _fields;
-
+        
         public object Create()
         {
             return _createHandler == null ? Activator.CreateInstance(_type, true) : _createHandler();

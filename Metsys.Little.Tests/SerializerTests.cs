@@ -7,11 +7,13 @@ namespace Metsys.Little.Tests
 {
    public class SerializerTests : BaseFixture
    {
-       [Fact]
-       public void NullGetsSerialized() {
-           var data = Serializer.Serialize(new SimpleNullClass());
-           Assert.Equal(new byte[2], data);
-       }
+      [Fact]
+      public void NullGetsSerialized()
+      {
+         var data = Serializer.Serialize(new SimpleNullClass());
+         Assert.Equal(128, data[0] & 128);
+         Assert.Equal(128, data[1] & 128);
+      }
       [Fact]
       public void NullFieldsGetsSerialized()
       {
@@ -22,14 +24,14 @@ namespace Metsys.Little.Tests
       public void NullableGetsPrefixedWhenNull()
       {
          var data = Serializer.Serialize(new { x = (bool?)null });
-         Assert.Equal(0, data[0]);
+         Assert.Equal(128, data[0] & 128);
          Assert.Equal(1, data.Length);
       }
       [Fact]
       public void NullableGetsPrefixedWhenNotNull()
       {
          var data = Serializer.Serialize(new { x = (bool?)true });
-         Assert.Equal(1, data[0]);
+         Assert.Equal(0, data[0] & 128);
          Assert.Equal(1, data[1]);
       }
       [Fact]
@@ -98,8 +100,8 @@ namespace Metsys.Little.Tests
       public void StringGetsSerialized()
       {
          var data = Serializer.Serialize(new {x = "abc123"});
-         var actual = Encoding.Default.GetString(data, 2, data[1]); 
-         Assert.Equal(1, data[0]);
+         var actual = Encoding.Default.GetString(data, 2, data[1]);
+         Assert.Equal(0, data[0] & 128);
          Assert.Equal("abc123", actual);
       }
       [Fact]
@@ -127,7 +129,7 @@ namespace Metsys.Little.Tests
       public void ArrayOfIntegersGetsSerialized()
       {
          var data = Serializer.Serialize(new {x = new[] {1, 5, 9, 19}});
-         Assert.Equal(1, data[0]);
+         Assert.Equal(0, data[0] & 128);
          Assert.Equal(4, BitConverter.ToInt32(data, 1));
          Assert.Equal(1, BitConverter.ToInt32(data, 5));
          Assert.Equal(5, BitConverter.ToInt32(data, 9));
@@ -138,7 +140,7 @@ namespace Metsys.Little.Tests
       public void NullArrayGetsSerialized()
       {
          var data = Serializer.Serialize(new SimpleClass<IList<byte>>());
-         Assert.Equal(0, data[0]);
+         Assert.Equal(128, data[0] & 128);
          Assert.Equal(1, data.Length);
       }
       [Fact]
@@ -168,6 +170,31 @@ namespace Metsys.Little.Tests
           var guid = Guid.NewGuid();
           var data = Serializer.Serialize(new { x = guid });
           Assert.Equal(guid, new Guid(data));
+      }
+      [Fact]
+      public void InterfaceGetsFlaggedAsAmbiguous()
+      {
+          var data = Serializer.Serialize(new InterfaceContainer {Implementation = new ImplementationA()});
+          Assert.Equal(0, data[0] & 128);
+          Assert.Equal(64, data[0] & 64);
+          var actual = Encoding.Default.GetString(data, 2, data[1]);
+          Assert.Equal("Metsys.Little.Tests.ImplementationA, Metsys.Little.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", actual);
+      }
+      [Fact]
+      public void NonAbstractDoesntHaveAmbiguousFlag()
+      {
+          var data = Serializer.Serialize(new {x = (bool?)null}); //nullable but not abstract
+          Assert.Equal(128, data[0] & 128);
+          Assert.Equal(0, data[0] & 64);          
+      }
+      [Fact]
+      public void AbstractGetsFlaggedAsAmbiguous()
+      {
+          var data = Serializer.Serialize(new AbstractContainer { Implementation = new ImplementationB() });
+          Assert.Equal(0, data[0] & 128);
+          Assert.Equal(64, data[0] & 64);
+          var actual = Encoding.Default.GetString(data, 2, data[1]);
+          Assert.Equal("Metsys.Little.Tests.ImplementationB, Metsys.Little.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", actual);
       }
    }
 }

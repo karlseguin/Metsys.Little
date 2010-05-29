@@ -7,7 +7,8 @@ namespace Metsys.Little
       {
          private readonly PropertyInfo _property;
          private readonly bool _nullable;
-         private readonly Type _type;
+         private readonly bool _hasHeader;         
+         private readonly Type _type;         
 
          public Type Type
          {
@@ -21,6 +22,10 @@ namespace Metsys.Little
          {
             get { return _nullable; }
          }
+         public bool HasHeader
+         {
+            get { return _hasHeader;}
+         }
        
          public Action<object, object> Setter { get; private set; }
 
@@ -31,6 +36,7 @@ namespace Metsys.Little
             var t = property.PropertyType;
             _property = property;
             _nullable = IsNullable(t);
+             _hasHeader = _nullable || Helper.IsAmbiguous(property.DeclaringType);
             if (t.IsEnum)
             {
                _type = Enum.GetUnderlyingType(t);
