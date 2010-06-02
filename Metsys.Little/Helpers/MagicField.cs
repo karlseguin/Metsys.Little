@@ -7,6 +7,7 @@ namespace Metsys.Little
       {
          private readonly FieldInfo _property;
          private readonly bool _nullable;
+         private readonly bool _hasHeader;
          private readonly Type _type;
 
          public Type Type
@@ -21,7 +22,10 @@ namespace Metsys.Little
          {
             get { return _nullable; }
          }
-       
+         public bool HasHeader {
+             get { return _hasHeader; }
+         }
+    
          public Action<object, object> Setter { get; private set; }
 
          public Func<object, object> Getter { get; private set; }
@@ -31,7 +35,8 @@ namespace Metsys.Little
             var t = field.FieldType;
             _property = field;
             _nullable = IsNullable(t);
-            if (t.IsEnum)
+            _hasHeader = _nullable || Helper.IsAmbiguous(field.DeclaringType);
+            if(t.IsEnum)
             {
                _type = Enum.GetUnderlyingType(t);
             }
@@ -46,14 +51,17 @@ namespace Metsys.Little
             Getter = CreateGetterMethod(field);
             Setter = CreateSetterMethod(field);
          }
+
          public static bool IsNullable(Type type)
          {
             return !type.IsValueType ||(type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)));
          }
+
          private static Action<object, object> CreateSetterMethod(FieldInfo field)
          {
             return field.SetValue;
          }
+
          private static Func<object, object> CreateGetterMethod(FieldInfo field)
          {
              return field.GetValue;

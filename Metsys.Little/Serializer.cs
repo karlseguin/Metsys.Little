@@ -77,10 +77,10 @@ namespace Metsys.Little
             foreach(var field in helper.Fields) {
                 var value = field.Getter(o);
                 if(value == null) {
-                    WriteNull();
+                    WriteHeader(new DataHeader { IsNull = true });
                     continue;
                 }
-                SerializeMember(field.Getter(o), field.Nullable);
+                SerializeMember(field.Getter(o), field.Nullable, field.Type);
             }
         }
 

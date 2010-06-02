@@ -135,16 +135,23 @@ namespace Metsys.Little
                property.Setter(instance, value);
             }
          }
-            foreach(var field in helper.Fields) {
-                object container = null;
-                if(field.Setter == null) {
-                    container = field.Getter(instance);
-                }
-                var value = field.Nullable && IsNull() ? null : DeserializeValue(field.Type, container);
-                if(container == null) {
-                    field.Setter(instance, value);
-                }
+         foreach(var field in helper.Fields) {
+             object container = null;
+             if(field.Setter == null) {
+                 container = field.Getter(instance);
+             }
+             var header = field.HasHeader ? ReaderHeader() : DataHeader.Default;
+            object value = null;
+            if (!header.IsNull)
+            {
+                var propertyType = !header.IsAmbiguous ? field.Type : Type.GetType((string)_readerLookup[typeof(string)](this));
+               value = DeserializeValue(propertyType, container);
             }
+            if (container == null)
+            {
+                field.Setter(instance, value);
+            }
+         }
          return instance;
       }
 
