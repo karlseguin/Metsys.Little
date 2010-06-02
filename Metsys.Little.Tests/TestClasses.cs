@@ -121,4 +121,19 @@ namespace Metsys.Little.Tests
    {
       public BaseClass Implementation { get; set; }
    }
+
+   public class FieldsAndProperties {
+       public readonly int Id;
+       public string Name;
+       private string email;
+       public string Email {
+           get { return email; } 
+           set { email = value; }
+       }
+       public Guid Ref { get; set; }
+       public FieldsAndProperties() { }
+       public FieldsAndProperties(int id) {
+           Id = id;
+       }
+   }
 }

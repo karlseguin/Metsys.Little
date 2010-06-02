@@ -154,5 +154,19 @@ namespace Metsys.Little.Tests
          var actual = Deserializer.Deserialize<AbstractContainer>(data);
          Assert.Equal(null, actual.Implementation);
       }
+
+       [Fact]
+       public void RoundtripMixedFieldsAndProperties() {
+           var expected = new FieldsAndProperties(123) {
+               Name = "bob",
+               Email = "a@b.com",
+               Ref = Guid.NewGuid()
+           };
+           var data = Serializer.Serialize(expected);
+           var actual = Deserializer.Deserialize<FieldsAndProperties>(data);
+           Assert.Equal(expected.Id, actual.Id);
+           Assert.Equal(expected.Name, actual.Name);
+           Assert.Equal(expected.Email, actual.Email);
+      }
    }
 }
