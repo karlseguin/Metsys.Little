@@ -18,7 +18,8 @@ namespace Metsys.Little.Tests
       public void NullFieldsGetsSerialized()
       {
          var data = Serializer.Serialize(new SimpleNullFieldClass());
-         Assert.Equal(new byte[2], data);
+         Assert.Equal(128, data[0] & 128);
+         Assert.Equal(128, data[1] & 128);
       }
        [Fact]
       public void NullableGetsPrefixedWhenNull()
@@ -146,7 +147,7 @@ namespace Metsys.Little.Tests
       [Fact]
       public void NullArrayFieldGetsSerialized() {
           var data = Serializer.Serialize(new SimpleFieldClass<IList<byte>>());
-          Assert.Equal(0, data[0]);
+          Assert.Equal(128, data[0] & 128);
           Assert.Equal(1, data.Length);
       }
       [Fact(Skip = "took out this feature")]

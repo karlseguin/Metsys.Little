@@ -28,7 +28,7 @@ namespace Metsys.Little.Tests
       }
       [Fact]
       public void NullFieldsGetDeserialized() {
-          var o = Deserializer.Deserialize<SimpleNullFieldClass>(new byte[2]);
+          var o = Deserializer.Deserialize<SimpleNullFieldClass>(new byte[2] { 128, 128 });
           Assert.Equal(null, o.NullInt);
           Assert.Equal(null, o.NullString);
       }
