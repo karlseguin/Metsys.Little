@@ -32,7 +32,7 @@ namespace Metsys.Little
          _reader = reader;
       }
 
-      public static T Deserialize<T>(byte[] objectData) where T : class
+      public static T Deserialize<T>(byte[] objectData)
       {
          using (var ms = new MemoryStream())
          {

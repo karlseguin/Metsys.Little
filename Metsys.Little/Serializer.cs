@@ -51,14 +51,18 @@ namespace Metsys.Little
 
         private void Start(object o)
         {
+            var type = o.GetType();
+            if (_writerLookup.ContainsKey(type))
+            {
+               _writerLookup[type](this, o);
+               return;
+            }
             if (o is IEnumerable)
             {
-                Write((IEnumerable) o);
+               Write((IEnumerable)o);
+               return;
             }
-            else
-            {
-                WriteObject(o);
-            }
+            WriteObject(o);
         }
 
         private void WriteObject(object o)

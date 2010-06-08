@@ -6,7 +6,7 @@ using Xunit;
 namespace Metsys.Little.Tests
 {
    public class SerializerTests : BaseFixture
-   {
+   {      
       [Fact]
       public void NullGetsSerialized()
       {
@@ -196,6 +196,24 @@ namespace Metsys.Little.Tests
           Assert.Equal(64, data[0] & 64);
           var actual = Encoding.Default.GetString(data, 2, data[1]);
           Assert.Equal("Metsys.Little.Tests.ImplementationB, Metsys.Little.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", actual);
+      }
+      [Fact]
+      public void ScalarIntegerGetsSerialized()
+      {
+         var data = Serializer.Serialize(58);
+         Assert.Equal(new byte[]{58, 0, 0, 0}, data);
+      }
+      [Fact]
+      public void ScalarBoolGetsSerialized()
+      {
+         var data = Serializer.Serialize(true);
+         Assert.Equal(new byte[] { 1 }, data);
+      }
+      [Fact]
+      public void ScalarStringGetsSerialized()
+      {
+         var data = Serializer.Serialize("abc123");
+         Assert.Equal(new byte[] { 6, 97, 98, 99, 49, 50, 51 }, data);
       }
    }
 }

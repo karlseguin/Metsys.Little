@@ -184,6 +184,27 @@ namespace Metsys.Little.Tests
           var o = Deserializer.Deserialize<InterfaceContainer>(header.Append(payload));
           Assert.Equal("my name", ((ImplementationA)o.Implementation).Name);
       }      
+      [Fact]
+      public void ScalarIntegerGetsDeseralized()
+      {
+         var data = new byte[]{240, 0, 0, 0};
+         var o = Deserializer.Deserialize<int>(data);
+         Assert.Equal(240, o);
+      }
+      [Fact]
+      public void ScalarStringGetsDeseralized()
+      {
+         var data = Encoding.Default.GetBytes("ovr9k").Prefix(5);
+         var o = Deserializer.Deserialize<string>(data);
+         Assert.Equal("ovr9k", o);
+      }
+      [Fact]
+      public void ScalarBoolGetsDeseralized()
+      {
+         var data = new byte[] { 1 };
+         var o = Deserializer.Deserialize<bool>(data);
+         Assert.Equal(true, o);
+      }
    }
 
    internal static class Extensions
